@@ -4,9 +4,9 @@ variables:
   ml-rg: 'rg-ml' # AML resource Group name
   ml-ct: 'mytrcompute44' # AML Compute cluster name
   ml-path: 'models/diabetes' # Model directory path in repo
-  ml-exp: 'exp-test' # Experiment name
-  ml-model-name: 'diabetes-model' # Model name
-  ml-aks-name: 'akscluster' # AKS cluster name
+  ml-exp: 'exp-test1' # Experiment name
+  ml-model-name: 'diabetes-model1' # Model name
+  ml-aks-name: 'aks-prod' # AKS cluster name
 
 trigger:
 - master
@@ -56,7 +56,14 @@ steps:
 
 # Add potential automated tests
 
-
+- task: AzureCLI@2
+  displayName: 'Create AKS cluster'
+  inputs:
+    azureSubscription: $(ml-ws-connection)
+    workingDirectory: $(ml-path)
+    scriptLocation: inlineScript
+    scriptType: 'bash'
+    inlineScript: 'az ml computetarget create aks --name $(ml-aks-name) --cluster-purpose DevTest'
 
 - task: AzureCLI@2
   displayName: 'Deploy model to AKS for Production'
